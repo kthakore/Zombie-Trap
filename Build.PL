@@ -6,6 +6,7 @@ my $builder = Module::Build->new(
     module_name         => 'ZT',
     license             => 'perl',
     dist_author         => q{kthakore <kthakore@cpan.org>},
+	dist_abstract		=> 'Zombie trap is awesome stuff',
     dist_version_from		=> 'lib/ZT.pm',
     build_requires => {
         'Test::More' => 0,
