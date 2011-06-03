@@ -4,4 +4,5 @@ use ZT;
 
 my $zt = ZT->new();
 
+$zt->start();
 
