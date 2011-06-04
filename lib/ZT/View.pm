@@ -4,13 +4,13 @@ use Moose;
 use SDLx::App;
 use SDL::Video;
 
-has 'video' => (
+has 'app' => (
     is      => 'rw',
     isa     => 'SDLx::App',
-    builder => '_build_video'
+    builder => '_build_app'
 );
 
-sub _build_video {
+sub _build_app {
     my $self = shift;
 
     my $app = SDLx::App->new(
@@ -26,7 +26,7 @@ sub run {
 
     my $self = shift;
 
-    $self->video()->run();
+    $self->app()->run();
 
 }
 
