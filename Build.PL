@@ -1,8 +1,9 @@
 use strict;
 use warnings;
-use Module::Build;
+use lib 'inc';
+use Module::Build::ZT;
 
-my $builder = Module::Build->new(
+my $builder = Module::Build::ZT->new(
     module_name        => 'ZT',
     license            => 'perl',
     dist_author        => q{kthakore <kthakore@cpan.org>},

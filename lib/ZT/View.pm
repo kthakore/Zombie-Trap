@@ -1,8 +1,10 @@
 package ZT::View;
 use Modern::Perl;
 use Moose;
+use SDL;
 use SDLx::App;
 use SDL::Video;
+use Carp;
 
 has 'app' => (
     is      => 'rw',
@@ -18,6 +20,8 @@ sub _build_app {
         eoq   => 1,
         flags => SDL_HWSURFACE | SDL_DOUBLEBUF
     );
+
+	croak "Cannot start video ".SDL::get_error unless $app;
 
     return $app;
 }
