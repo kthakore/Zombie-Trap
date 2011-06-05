@@ -11,6 +11,8 @@ my $builder = Module::Build::ZT->new(
     dist_version_from  => 'lib/ZT.pm',
     build_requires     => { 'Test::More' => 0, },
     add_to_cleanup     => ['ZT-*'],
+	extra_compiler_flags => '-I src',
+	extra_linker_flags => '-o src/zt.o',	
     create_makefile_pl => 'traditional',
 );
 
