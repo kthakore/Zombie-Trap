@@ -12,7 +12,6 @@ has 'view' =>
 has 'control' =>
   ( is => 'rw', isa => 'ZT::Control', default => sub { ZT::Control->new() } );
 
-
 sub start {
 
     my $self = shift;
@@ -22,6 +21,7 @@ sub start {
 }
 
 1;
+
 =pod 
 
 =head1 NAME

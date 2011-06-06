@@ -3,13 +3,13 @@ use Modern::Perl;
 use Moose;
 
 has 'state' => ( is => 'rw', isa => 'HashRef', default => sub { {} } );
-has 'body'  => ( is => 'rw', isa => 'Box2D::b2Body' );
+has 'body' => ( is => 'rw', isa => 'Box2D::b2Body' );
 
 sub attach {
-	my $self = shift;
-	my $zt = shift;
+    my $self = shift;
+    my $zt   = shift;
 
-	push (@{$zt->control->actors()}, $self );
+    push( @{ $zt->control->actors() }, $self );
 }
 
 1;

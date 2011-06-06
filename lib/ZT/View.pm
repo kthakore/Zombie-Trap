@@ -21,7 +21,7 @@ sub _build_app {
         flags => SDL_HWSURFACE | SDL_DOUBLEBUF
     );
 
-	croak "Cannot start video ".SDL::get_error unless $app;
+    croak "Cannot start video " . SDL::get_error unless $app;
 
     return $app;
 }
