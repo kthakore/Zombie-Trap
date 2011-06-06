@@ -3,6 +3,7 @@ use Modern::Perl;
 use Moose;
 
 has 'state' => ( is => 'rw', isa => 'HashRef', default => sub { {} } );
+has 'body'  => ( is => 'rw', isa => 'Box2D::b2_dynamicBody' );
 
 sub attach {
 	my $self = shift;
