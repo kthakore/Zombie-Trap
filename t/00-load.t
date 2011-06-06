@@ -4,7 +4,7 @@ use Test::More;
 
 BEGIN {
 
-	foreach( qw/ ZT ZT::Actor ZT::XS ZT::View ZT::Control /)
+	foreach( qw/ ZT ZT::Actor ZT::XS ZT::View ZT::Control ZT::Actor::Zombie/)
 	{
 		use_ok( $_ ) || print "Bail out!";
 	}

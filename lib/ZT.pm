@@ -1,8 +1,9 @@
 package ZT;
 use Modern::Perl;
+use MooseX::Singleton;
+
 use ZT::View;
 use ZT::Control;
-use Moose;
 
 our $VERSION = '0.01';
 

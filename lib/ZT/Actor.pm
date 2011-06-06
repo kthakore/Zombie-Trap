@@ -3,7 +3,7 @@ use Modern::Perl;
 use Moose;
 
 has 'state' => ( is => 'rw', isa => 'HashRef', default => sub { {} } );
-has 'body'  => ( is => 'rw', isa => 'Box2D::b2_dynamicBody' );
+has 'body'  => ( is => 'rw', isa => 'Box2D::b2Body' );
 
 sub attach {
 	my $self = shift;
@@ -11,7 +11,6 @@ sub attach {
 
 	push (@{$zt->control->actors()}, $self );
 }
-
 
 1;
 
