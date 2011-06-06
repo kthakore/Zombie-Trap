@@ -6,7 +6,7 @@
 MODULE = ZT::XS 	PACKAGE = ZT::XS
 
 void
-foo ()
+zt ()
 	CODE:
 		zt();
 	

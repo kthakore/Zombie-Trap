@@ -35,3 +35,17 @@ sub run {
 }
 
 1;
+
+=pod 
+
+=head1 NAME
+
+ZT::View - SDL View handler for ZT
+
+=head1 METHOD
+
+=head2 run
+
+Running the SDLx::App
+
+=cut 
