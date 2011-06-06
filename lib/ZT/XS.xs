@@ -3,7 +3,7 @@
 #include "XSUB.h"
 #include "zt.h"
 
-MODULE = ZT 	PACKAGE = ZT
+MODULE = ZT::XS 	PACKAGE = ZT::XS
 
 void
 foo ()

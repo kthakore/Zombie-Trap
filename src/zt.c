@@ -3,6 +3,6 @@
 
 int zt ( )
 {
-	printf( "Zombie!!! \n" );
+	
 	return 0;
 }

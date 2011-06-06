@@ -12,7 +12,7 @@ my $builder = Module::Build::ZT->new(
     build_requires     => { 'Test::More' => 0, },
     add_to_cleanup     => ['ZT-*'],
 	extra_compiler_flags => '-I src',
-	extra_linker_flags => '-o src/zt.o',	
+	extra_linker_flags => 'src/zt.o',	
     create_makefile_pl => 'traditional',
 );
 
