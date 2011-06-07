@@ -9,8 +9,13 @@ my $builder = Module::Build::ZT->new(
     dist_author       => q{kthakore <kthakore@cpan.org>},
     dist_abstract     => 'Zombie trap is awesome stuff',
     dist_version_from => 'lib/ZT.pm',
-    build_requires =>
-      { 'Test::More' => 0, 'MooseX::Singleton' => 0, 'Box2D' => 0, 'SDL' => 0 },
+    build_requires    => {
+        'Test::More'                   => 0,
+        'MooseX::Singleton'            => 0,
+        'Box2D'                        => 0,
+        'SDL'                          => 0,
+        'Moose::Util::TypeConstraints' => 0
+    },
     add_to_cleanup       => ['ZT-*'],
     extra_compiler_flags => '-I src',
     extra_linker_flags   => 'src/zt.o',
