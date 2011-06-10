@@ -12,6 +12,12 @@ has 'app' => (
     builder => '_build_app'
 );
 
+has 'running' => (
+	is      => 'rw',
+	isa     => 'ArrayRef',
+	default => sub{ [] }
+);
+
 sub _build_app {
     my $self = shift;
 
@@ -31,6 +37,12 @@ sub run {
     my $self = shift;
 
     $self->app()->run();
+
+}
+
+
+sub load_calls {
+	my $self = shift;
 
 }
 

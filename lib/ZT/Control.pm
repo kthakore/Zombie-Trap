@@ -18,7 +18,7 @@ has 'world' =>
 has 'state' =>
   ( is => 'rw', isa => 'GameState', default => sub { 'game' } );
 has 'data' => 
-  ( is => 'rw', isa => 'HashRef', builder => '_build_data' );
+  ( is => 'rw', isa => 'HashRef', default => sub { {} } );
 
 sub _build_world {
 
@@ -27,17 +27,8 @@ sub _build_world {
 
 }
 
-sub _build_data {
-
-	my $hash = {};
-
-	return {};
-
-}
-
 sub switch_board {
 	my $self = shift;
-	my $zt = ZT->instance();
 	my $app  = shift;
 
 	given ( $self->state )
@@ -48,6 +39,14 @@ sub switch_board {
 	}
 
 }
+
+sub load_data {
+	my $self = shift;
+	my $zt = ZT->instance(); 
+
+	#load image globs
+}
+
 1;
 
 =pod
@@ -61,5 +60,9 @@ ZT::Control - Control for the game
 =head2 switch_board
 
 Switches between game states
+
+=head2 load_data 
+
+Load data and update the view 
 
 =cut 
