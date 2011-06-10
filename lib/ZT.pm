@@ -16,9 +16,13 @@ sub start {
 
     my $self = shift;
 
+	#attach the switch board 
+	$self->view->app->add_move_handler( sub { $self->control->switch_board( @_ ) } );
+
     $self->view->run();
 
 }
+
 
 1;
 

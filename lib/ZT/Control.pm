@@ -2,6 +2,7 @@ package ZT::Control;
 use Modern::Perl;
 use Moose;
 use Moose::Util::TypeConstraints;
+use ZT;
 use ZT::Actor;
 use Box2D;
 
@@ -15,7 +16,7 @@ has 'actors' =>
 has 'world' =>
   ( is => 'rw', isa => 'Box2D::b2World', builder => '_build_world' );
 has 'state' =>
-  ( is => 'rw', isa => 'GameState', default => sub { return 'menu' } );
+  ( is => 'rw', isa => 'GameState', default => sub { 'game' } );
 
 sub _build_world {
 
@@ -24,6 +25,19 @@ sub _build_world {
 
 }
 
+sub switch_board {
+	my $self = shift;
+	my $zt = ZT->instance();
+	my $app  = shift;
+
+	given ( $self->state )
+	{
+		warn "Show the menu" when /^menu$/;
+		warn "Run the game"	 when /^game$/;
+
+	}
+
+}
 1;
 
 =pod
@@ -31,5 +45,11 @@ sub _build_world {
 =head1 NAME
 
 ZT::Control - Control for the game 
+
+=head1 METHODS
+
+=head2 switch_board
+
+Switches between game states
 
 =cut 
