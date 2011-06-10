@@ -17,11 +17,21 @@ has 'world' =>
   ( is => 'rw', isa => 'Box2D::b2World', builder => '_build_world' );
 has 'state' =>
   ( is => 'rw', isa => 'GameState', default => sub { 'game' } );
+has 'data' => 
+  ( is => 'rw', isa => 'HashRef', builder => '_build_data' );
 
 sub _build_world {
 
     my $vec = Box2D::b2Vec2->new( 0, 0 );
     my $world = Box2D::b2World->new( $vec, 1 );
+
+}
+
+sub _build_data {
+
+	my $hash = {};
+
+	return {};
 
 }
 
