@@ -42,7 +42,6 @@ $listener->SetBeginContactSub(
         my $bodyB = $contact->GetFixtureB->GetBody();
 
         foreach ( [ $bodyA, $bodyB ], [ $bodyB, $bodyA ] ) {
-            #next if $_->[1]->GetType() == Box2D::b2_dynamicBody;
             my $sub = $_->[0]->GetUserData();
             $sub->( body => $_->[1] ) if ref $sub eq 'CODE';
         }
