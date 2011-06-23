@@ -168,10 +168,10 @@ sub make_fixture {
     return $body->CreateFixtureDef($fixtureDef);
 }
 
+# Apply an impulse the zombie when it's moving slowly.
 sub move_zombie {
     my ($zombie) = @_;
     my $v = $zombie->{body}->GetLinearVelocity();
-
     if ( abs( $v->x ) < 1.0 && abs( $v->y ) < 0.01 ) {
         my $d = Box2D::b2Vec2->new( $zombie->{direction} * 4.0, 0 );
         my $p = $zombie->{body}->GetWorldCenter();
