@@ -42,6 +42,7 @@ $listener->SetBeginContactSub(
         my $bodyB = $contact->GetFixtureB->GetBody();
 
         foreach ( [ $bodyA, $bodyB ], [ $bodyB, $bodyA ] ) {
+            #next if $_->[1]->GetType() == Box2D::b2_dynamicBody;
             my $sub = $_->[0]->GetUserData();
             $sub->( body => $_->[1] ) if ref $sub eq 'CODE';
         }
@@ -113,7 +114,7 @@ sub make_zombie {
             make_body( $x + $hx, $y + $hy, dynamic => 1, fixedRotation => 1 ),
         shape     => make_rect( $w, $h ),
         color     => 0xDDDDDDFF,
-        direction => 1,
+        direction => -1,
     );
     make_fixture( @zombie{qw( body shape )} );
 
@@ -190,7 +191,7 @@ sub is_above {
         ( 0 .. $shape->GetVertexCount() - 1 );
 
     foreach (@verts) {
-        return 0 unless $vec->y < $_->y;
+        return 0 if $vec->y > $_->y;
     }
 
     return 1;
