@@ -113,7 +113,7 @@ sub make_zombie {
             make_body( $x + $hx, $y + $hy, dynamic => 1, fixedRotation => 1 ),
         shape     => make_rect( $w, $h ),
         color     => 0xDDDDDDFF,
-        direction => -1,
+        direction => 1,
     );
     make_fixture( @zombie{qw( body shape )} );
 
