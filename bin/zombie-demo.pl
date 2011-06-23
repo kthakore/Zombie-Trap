@@ -1,0 +1,164 @@
+use Modern::Perl;
+use SDL;
+use SDL::Video;
+use SDLx::App;
+use Box2D;
+use FindBin;
+use YAML::Tiny;
+
+my $config = YAML::Tiny->read("$FindBin::Bin/../data/level1.yaml")->[0];
+
+my ( $width, $height ) = @$config{qw( width height )};
+
+my $ppm = 15.0;
+my $mpp = 1.0 / $ppm;
+
+my $fps      = 60.0;
+my $timestep = 1.0 / $fps;
+my $vIters   = 10;
+my $pIters   = 10;
+
+my $gravity = Box2D::b2Vec2->new( 0, 9.8 );
+my $world = Box2D::b2World->new( $gravity, 1 );
+
+my @walls;
+my @zombies;
+
+foreach ( @{ $config->{walls} } ) {
+    push @walls, make_wall( map { s2w($_) } split /\s+/, $_ );
+}
+
+foreach ( @{ $config->{zombies} } ) {
+    push @zombies, make_zombie( map { s2w($_) } split /\s+/, $_ );
+}
+
+my $app = SDLx::App->new(
+    width  => $width,
+    height => $height,
+    dt     => $timestep,
+    min_t  => $timestep / 2,
+    flags  => SDL_DOUBLEBUF | SDL_HWSURFACE,
+    eoq    => 1,
+);
+
+$app->add_show_handler(
+    sub {
+        $world->Step( $timestep, $vIters, $pIters );
+
+        $app->draw_rect( undef, 0x000000FF );
+
+        move_zombie($_) foreach @zombies;
+
+        draw_wall($_)   foreach @walls;
+        draw_zombie($_) foreach @zombies;
+
+        $app->update();
+    }
+);
+
+$app->run();
+
+# screen to world
+sub s2w { return $_[0] * $mpp }
+
+# world to screen
+sub w2s { return $_[0] * $ppm }
+
+sub make_wall {
+    my ( $x, $y, $w, $h ) = @_;
+
+    my ( $hx, $hy ) = ( $w / 2.0, $h / 2.0 );
+
+    my %wall = (
+        body  => make_body( $x + $hx, $y + $hy ),
+        shape => make_rect( $w,       $h ),
+        color => 0x00FF00FF,
+    );
+    make_fixture( @wall{qw( body shape )} );
+
+    return \%wall;
+}
+
+sub make_zombie {
+    my ( $x, $y ) = @_;
+
+    my ( $w, $h ) = map { s2w($_) } ( 10, 30 );
+    my ( $hx, $hy ) = ( $w / 2.0, $h / 2.0 );
+
+    my %zombie = (
+        body =>
+            make_body( $x + $hx, $y + $hy, dynamic => 1, fixedRotation => 1 ),
+        shape     => make_rect( $w, $h ),
+        color     => 0xDDDDDDFF,
+        direction => 1,
+    );
+    make_fixture( @zombie{qw( body shape )} );
+
+    return \%zombie;
+}
+
+sub make_body {
+    my ( $x, $y, %args ) = @_;
+    my $bodyDef = Box2D::b2BodyDef->new();
+    $bodyDef->type(Box2D::b2_dynamicBody) if $args{dynamic};
+    $bodyDef->fixedRotation(1) if $args{fixedRotation};
+    $bodyDef->position->Set( $x, $y );
+    return $world->CreateBody($bodyDef);
+}
+
+sub make_rect {
+    my ( $w, $h ) = @_;
+    my $rect = Box2D::b2PolygonShape->new();
+    $rect->SetAsBox( $w / 2, $h / 2 );
+    return $rect;
+}
+
+sub make_fixture {
+    my ( $body, $shape ) = @_;
+    my $fixtureDef = Box2D::b2FixtureDef->new();
+    $fixtureDef->shape($shape);
+    $fixtureDef->friction(0.2);
+    $fixtureDef->density(1.0);
+    return $body->CreateFixtureDef($fixtureDef);
+}
+
+sub move_zombie {
+    my ($zombie) = @_;
+    my $v = $zombie->{body}->GetLinearVelocity();
+
+    if ( abs( $v->x ) < 1.0 && abs( $v->y ) < 0.01 ) {
+        my $d = Box2D::b2Vec2->new( $zombie->{direction} * 4.0, 0 );
+        my $p = $zombie->{body}->GetWorldCenter();
+        $zombie->{body}->ApplyLinearImpulse( $d, $p );
+    }
+}
+
+sub draw_wall {
+    my ($wall) = @_;
+
+    my ( $body, $shape, $color ) = @$wall{qw( body shape color )};
+
+    my @verts = map { $body->GetWorldPoint( $shape->GetVertex($_) ) }
+        ( 0 .. $shape->GetVertexCount() - 1 );
+
+    my @vx = map { w2s( $_->x ) } @verts;
+    my @vy = map { w2s( $_->y ) } @verts;
+
+    SDL::GFX::Primitives::filled_polygon_color( $app, \@vx, \@vy,
+        scalar @verts, $color );
+}
+
+sub draw_zombie {
+    my ($zombie) = @_;
+
+    my ( $body, $shape, $color ) = @$zombie{qw( body shape color )};
+
+    my @verts = map { $body->GetWorldPoint( $shape->GetVertex($_) ) }
+        ( 0 .. $shape->GetVertexCount() - 1 );
+
+    my @vx = map { w2s( $_->x ) } @verts;
+    my @vy = map { w2s( $_->y ) } @verts;
+
+    SDL::GFX::Primitives::filled_polygon_color( $app, \@vx, \@vy,
+        scalar @verts, $color );
+}
