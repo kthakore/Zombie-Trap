@@ -32,6 +32,24 @@ foreach ( @{ $config->{zombies} } ) {
     push @zombies, make_zombie( map { s2w($_) } split /\s+/, $_ );
 }
 
+my $listener = Box2D::PerlContactListener->new();
+
+$listener->SetBeginContactSub(
+    sub {
+        my ($contact) = @_;
+
+        my $bodyA = $contact->GetFixtureA->GetBody();
+        my $bodyB = $contact->GetFixtureB->GetBody();
+
+        foreach ( [ $bodyA, $bodyB ], [ $bodyB, $bodyA ] ) {
+            my $sub = $_->[0]->GetUserData();
+            $sub->( body => $_->[1] ) if ref $sub eq 'CODE';
+        }
+    }
+);
+
+$world->SetContactListener($listener);
+
 my $app = SDLx::App->new(
     width  => $width,
     height => $height,
@@ -76,6 +94,11 @@ sub make_wall {
     );
     make_fixture( @wall{qw( body shape )} );
 
+    # Store the shape for use in the contact listener.
+    # b2Fixture::GetShape() could be used in the contact listener, but
+    # it returns a b2Shape, and a b2PolygonShape is needed.
+    $wall{body}->SetUserData( $wall{shape} );
+
     return \%wall;
 }
 
@@ -93,6 +116,29 @@ sub make_zombie {
         direction => 1,
     );
     make_fixture( @zombie{qw( body shape )} );
+
+    # Contact listener callback.
+    $zombie{body}->SetUserData(
+
+        # Reverse the zombie's direction when appropriate.
+        sub {
+            my (%other) = @_;
+
+            my $zc = $zombie{body}->GetWorldCenter();
+
+            # Don't reverse direction if the zombie falls on a wall.
+            if ( $other{body}->GetType() == Box2D::b2_staticBody ) {
+                $other{shape} = $other{body}->GetUserData();
+                return if is_above( $zc, \%other );
+            }
+
+            # Don't reverse direction if the zombie is moving slowly.
+            my $v = $zombie{body}->GetLinearVelocity();
+            return if abs( $v->x ) < 0.1;
+
+            $zombie{direction} *= -1;
+        }
+    );
 
     return \%zombie;
 }
@@ -131,6 +177,24 @@ sub move_zombie {
         my $p = $zombie->{body}->GetWorldCenter();
         $zombie->{body}->ApplyLinearImpulse( $d, $p );
     }
+}
+
+# Is the vector above the object?
+sub is_above {
+    my ( $vec, $obj ) = @_;
+
+    my ( $body, $shape ) = @$obj{qw( body shape )};
+
+    bless $shape, 'Box2D::b2PolygonShape';
+
+    my @verts = map { $body->GetWorldPoint( $shape->GetVertex($_) ) }
+        ( 0 .. $shape->GetVertexCount() - 1 );
+
+    foreach (@verts) {
+        return 0 unless $vec->y < $_->y;
+    }
+
+    return 1;
 }
 
 sub draw_wall {
