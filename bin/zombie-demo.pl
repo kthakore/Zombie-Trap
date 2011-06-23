@@ -173,9 +173,10 @@ sub move_zombie {
     my ($zombie) = @_;
     my $v = $zombie->{body}->GetLinearVelocity();
     if ( abs( $v->x ) < 1.0 && abs( $v->y ) < 0.01 ) {
-        my $d = Box2D::b2Vec2->new( $zombie->{direction} * 4.0, 0 );
+        my $vx = $zombie->{direction} * (rand() * 2.0 + 2.0);
+        my $i = Box2D::b2Vec2->new( $vx, 0.0 );
         my $p = $zombie->{body}->GetWorldCenter();
-        $zombie->{body}->ApplyLinearImpulse( $d, $p );
+        $zombie->{body}->ApplyLinearImpulse( $i, $p );
     }
 }
 
