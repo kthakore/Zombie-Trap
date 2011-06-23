@@ -1,6 +1,7 @@
 ---
 width: 800
 height: 600
+# Note: origin is the upper-left corner
 walls:
   - 0   0   800 10
   - 0   590 800 10
