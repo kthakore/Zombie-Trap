@@ -186,8 +186,6 @@ sub is_above {
 
     my ( $body, $shape ) = @$obj{qw( body shape )};
 
-    bless $shape, 'Box2D::b2PolygonShape';
-
     my @verts = map { $body->GetWorldPoint( $shape->GetVertex($_) ) }
         ( 0 .. $shape->GetVertexCount() - 1 );
 
