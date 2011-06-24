@@ -1,7 +1,10 @@
 use Modern::Perl;
 use SDL;
+use SDL::Rect;
 use SDL::Video;
 use SDLx::App;
+use SDLx::Sprite::Animated;
+use SDLx::Surface;
 use Box2D;
 use FindBin;
 use YAML::Tiny;
@@ -18,8 +21,19 @@ my $timestep = 1.0 / $fps;
 my $vIters   = 10;
 my $pIters   = 10;
 
+my $app = SDLx::App->new(
+    width  => $width,
+    height => $height,
+    dt     => $timestep,
+    min_t  => $timestep / 2,
+    flags  => SDL_DOUBLEBUF | SDL_HWSURFACE,
+    eoq    => 1,
+);
+
 my $gravity = Box2D::b2Vec2->new( 0, 9.8 );
 my $world = Box2D::b2World->new( $gravity, 1 );
+
+my $zombieSurface = SDLx::Surface->load( "$FindBin::Bin/../data/zombie.bmp" );
 
 my @walls;
 my @zombies;
@@ -49,15 +63,6 @@ $listener->SetBeginContactSub(
 );
 
 $world->SetContactListener($listener);
-
-my $app = SDLx::App->new(
-    width  => $width,
-    height => $height,
-    dt     => $timestep,
-    min_t  => $timestep / 2,
-    flags  => SDL_DOUBLEBUF | SDL_HWSURFACE,
-    eoq    => 1,
-);
 
 $app->add_show_handler(
     sub {
@@ -114,6 +119,7 @@ sub make_zombie {
         shape     => make_rect( $w, $h ),
         color     => 0xDDDDDDFF,
         direction => 1,
+        sprite    => make_zombie_sprite(),
     );
     make_fixture( @zombie{qw( body shape )} );
 
@@ -196,25 +202,37 @@ sub is_above {
     return 1;
 }
 
+sub make_zombie_sprite {
+    return SDLx::Sprite::Animated->new(
+        surface => $zombieSurface,
+        alpha_key => 0x0000FFFF,
+        step_x => 63,
+        step_y => 65,
+        ticks_per_frame => 10,
+        sequences => {
+            left  => [ [0, 0], [1, 0], [2, 0], [3, 0] ],
+            right => [ [0, 1], [1, 1], [2, 1], [3, 1] ],
+        },
+        rect => SDL::Rect->new( 16, 21, 16, 25 ),
+    );
+}
+
 sub draw_wall {
     my ($wall) = @_;
 
-    my ( $body, $shape, $color ) = @$wall{qw( body shape color )};
-
-    my @verts = map { $body->GetWorldPoint( $shape->GetVertex($_) ) }
-        ( 0 .. $shape->GetVertexCount() - 1 );
-
-    my @vx = map { w2s( $_->x ) } @verts;
-    my @vy = map { w2s( $_->y ) } @verts;
-
-    SDL::GFX::Primitives::filled_polygon_color( $app, \@vx, \@vy,
-        scalar @verts, $color );
+    draw_polygon($wall);
 }
 
 sub draw_zombie {
     my ($zombie) = @_;
 
-    my ( $body, $shape, $color ) = @$zombie{qw( body shape color )};
+    draw_polygon($zombie);
+}
+
+sub draw_polygon {
+    my ($polygon) = @_;
+
+    my ( $body, $shape, $color ) = @$polygon{qw( body shape color )};
 
     my @verts = map { $body->GetWorldPoint( $shape->GetVertex($_) ) }
         ( 0 .. $shape->GetVertexCount() - 1 );
