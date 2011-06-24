@@ -33,7 +33,11 @@ my $app = SDLx::App->new(
 my $gravity = Box2D::b2Vec2->new( 0, 9.8 );
 my $world = Box2D::b2World->new( $gravity, 1 );
 
-my $zombieSurface = SDLx::Surface->load( "$FindBin::Bin/../data/zombie.bmp" );
+my $zombieWidth   = 16;
+my $zombieHeight  = 25;
+
+# http://opengameart.org/content/isometric-hero-and-creatures
+my $zombieSurface = SDLx::Surface->load("$FindBin::Bin/../data/zombie.bmp");
 
 my @walls;
 my @zombies;
@@ -56,8 +60,9 @@ $listener->SetBeginContactSub(
         my $bodyB = $contact->GetFixtureB->GetBody();
 
         foreach ( [ $bodyA, $bodyB ], [ $bodyB, $bodyA ] ) {
-            my $sub = $_->[0]->GetUserData();
-            $sub->( body => $_->[1] ) if ref $sub eq 'CODE';
+            my $data = $_->[0]->GetUserData();
+            my $sub = $data->{cb} if defined $data->{cb};
+            $sub->( $_->[1]->GetUserData->{self} ) if ref $sub eq 'CODE';
         }
     }
 );
@@ -68,7 +73,7 @@ $app->add_show_handler(
     sub {
         $world->Step( $timestep, $vIters, $pIters );
 
-        $app->draw_rect( undef, 0x000000FF );
+        $app->draw_rect( undef, 0x202020FF );
 
         move_zombie($_) foreach @zombies;
 
@@ -95,14 +100,14 @@ sub make_wall {
     my %wall = (
         body  => make_body( $x + $hx, $y + $hy ),
         shape => make_rect( $w,       $h ),
-        color => 0x00FF00FF,
+        color => 0x035307FF,
     );
     make_fixture( @wall{qw( body shape )} );
 
     # Store the shape for use in the contact listener.
     # b2Fixture::GetShape() could be used in the contact listener, but
     # it returns a b2Shape, and a b2PolygonShape is needed.
-    $wall{body}->SetUserData( $wall{shape} );
+    $wall{body}->SetUserData( { self => \%wall } );
 
     return \%wall;
 }
@@ -110,7 +115,7 @@ sub make_wall {
 sub make_zombie {
     my ( $x, $y ) = @_;
 
-    my ( $w, $h ) = map { s2w($_) } ( 10, 30 );
+    my ( $w, $h ) = map { s2w($_) } ( $zombieWidth, $zombieHeight );
     my ( $hx, $hy ) = ( $w / 2.0, $h / 2.0 );
 
     my %zombie = (
@@ -123,26 +128,31 @@ sub make_zombie {
     );
     make_fixture( @zombie{qw( body shape )} );
 
-    # Contact listener callback.
     $zombie{body}->SetUserData(
+        {   self => \%zombie,
 
-        # Reverse the zombie's direction when appropriate.
-        sub {
-            my (%other) = @_;
+            # Contact listener callback.
+            # Reverses the zombie's direction when appropriate.
+            cb => sub {
+                my ($other) = @_;
 
-            my $zc = $zombie{body}->GetWorldCenter();
+                my $zc = $zombie{body}->GetWorldCenter();
 
-            # Don't reverse direction if the zombie falls on a wall.
-            if ( $other{body}->GetType() == Box2D::b2_staticBody ) {
-                $other{shape} = $other{body}->GetUserData();
-                return if is_above( $zc, \%other );
-            }
+                # Don't reverse direction if the zombie falls on a wall.
+                #if ( $other{body}->GetType() == Box2D::b2_staticBody ) {
+                #$other{shape} = $other{body}->GetUserData();
+                #}
+                return if is_above( $zc, $other );
 
-            # Don't reverse direction if the zombie is moving slowly.
-            my $v = $zombie{body}->GetLinearVelocity();
-            return if abs( $v->x ) < 0.1;
+                # Don't reverse direction if the zombie is moving slowly.
+                my $v = $zombie{body}->GetLinearVelocity();
+                return if abs( $v->x ) < 0.1;
 
-            $zombie{direction} *= -1;
+                $zombie{direction} *= -1;
+
+                $zombie{sprite}
+                    ->sequence( $zombie{direction} == 1 ? 'right' : 'left' );
+                }
         }
     );
 
@@ -179,11 +189,12 @@ sub move_zombie {
     my ($zombie) = @_;
     my $v = $zombie->{body}->GetLinearVelocity();
     if ( abs( $v->x ) < 1.0 && abs( $v->y ) < 0.01 ) {
-        my $vx = $zombie->{direction} * (rand() * 2.0 + 2.0);
+        my $vx = $zombie->{direction} * ( rand() * 2.0 + 2.0 );
         my $i = Box2D::b2Vec2->new( $vx, 0.0 );
         my $p = $zombie->{body}->GetWorldCenter();
         $zombie->{body}->ApplyLinearImpulse( $i, $p );
     }
+    $zombie->{sprite}->next() if rand() > 0.9;
 }
 
 # Is the vector above the object?
@@ -204,16 +215,18 @@ sub is_above {
 
 sub make_zombie_sprite {
     return SDLx::Sprite::Animated->new(
-        surface => $zombieSurface,
-        alpha_key => 0x0000FFFF,
-        step_x => 63,
-        step_y => 65,
+        surface         => $zombieSurface,
+        alpha_key       => 0x0000FF,
+        step_x          => 63,
+        step_y          => 65,
         ticks_per_frame => 10,
-        sequences => {
-            left  => [ [0, 0], [1, 0], [2, 0], [3, 0] ],
-            right => [ [0, 1], [1, 1], [2, 1], [3, 1] ],
+        sequences       => {
+            left  => [ [ 0, 0 ], [ 1, 0 ], [ 2, 0 ], [ 3, 0 ] ],
+            right => [ [ 0, 1 ], [ 1, 1 ], [ 2, 1 ], [ 3, 1 ] ],
         },
-        rect => SDL::Rect->new( 16, 21, 16, 25 ),
+        rect     => SDL::Rect->new( 26, 21, $zombieWidth, $zombieHeight ),
+        clip     => SDL::Rect->new( 26, 21, $zombieWidth, $zombieHeight ),
+        sequence => 'right',
     );
 }
 
@@ -226,7 +239,13 @@ sub draw_wall {
 sub draw_zombie {
     my ($zombie) = @_;
 
-    draw_polygon($zombie);
+    my $rect = $zombie->{sprite}->rect;
+    my $p    = $zombie->{body}->GetWorldCenter();
+    $zombie->{sprite}->draw_xy(
+        $app,
+        w2s( $p->x ) - $rect->w / 2,
+        w2s( $p->y ) - $rect->h / 2
+    );
 }
 
 sub draw_polygon {
