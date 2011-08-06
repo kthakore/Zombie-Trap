@@ -13,11 +13,20 @@ sub new
 	my $class = shift;
 
 	my $self = {@_};
-
 	$self = bless $self, $class;
+
+	$self->_construct();
 
 	return $self;
 }
+
+sub _construct
+{
+	my $self = shift;
+	
+
+}
+
 
 1;
 
@@ -33,8 +42,11 @@ BoxSDL::Observable - A Box2D/SDL object that can be observed using SDLx::Control
 
 	my $obs = BoxSDL::Observable->new( 
 										world		  => $box2d_world, 
-										sprite        => $sdlx_surface,    		  # will be passed to callbacks 
 										app           => $sdlx_app,        		  # attaches callbacks to this controller/app 
+
+										body		  => $box2d_body, 
+										sprite        => $sdlx_surface,    		  # will be passed to callbacks 
+
 										on_contact    => $call_hash,              # attaches these callbacks on contact 
 										after_contact => $call_hash,              # attaches these callbacks when contact is done 
 										default 	  => $call_hash               # attaches these callbacks as soon we make observable 

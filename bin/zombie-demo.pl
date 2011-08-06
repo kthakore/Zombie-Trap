@@ -3,6 +3,8 @@ use SDL;
 use SDL::Video;
 use SDLx::App;
 use Box2D;
+use lib 'lib';
+use BoxSDL::Controller;
 use FindBin;
 use YAML::Tiny;
 
@@ -14,9 +16,9 @@ my $ppm = 15.0;
 my $mpp = 1.0 / $ppm;
 
 my $fps      = 60.0;
-my $timestep = 1.0 / $fps;
-my $vIters   = 10;
-my $pIters   = 10;
+my $timestep = 0.1;
+my $vIters   = 8;
+my $pIters   = 8;
 
 my $gravity = Box2D::b2Vec2->new( 0, 9.8 );
 my $world = Box2D::b2World->new( $gravity, 1 );
@@ -53,20 +55,31 @@ $world->SetContactListener($listener);
 my $app = SDLx::App->new(
     width  => $width,
     height => $height,
-    dt     => $timestep,
-    min_t  => $timestep / 2,
     flags  => SDL_DOUBLEBUF | SDL_HWSURFACE,
-    eoq    => 1,
 );
 
-$app->add_show_handler(
-    sub {
-        $world->Step( $timestep, $vIters, $pIters );
+my $controller = BoxSDL::Controller->new( 
+    dt     => $timestep, 
+	delay  => 1,
+    min_t  => $timestep / 2,
+    eoq    => 1,
+    world  => $world,
+    vIters => $vIters,
+    pIters => $pIters 
+    );
 
-        $app->draw_rect( undef, 0x000000FF );
 
+$controller->add_move_handler(
+sub{
         move_zombie($_) foreach @zombies;
 
+}
+
+);
+
+$controller->add_show_handler(
+    sub {
+        $app->draw_rect( undef, 0x000000FF );
         draw_wall($_)   foreach @walls;
         draw_zombie($_) foreach @zombies;
 
@@ -74,7 +87,7 @@ $app->add_show_handler(
     }
 );
 
-$app->run();
+$controller->run();
 
 # screen to world
 sub s2w { return $_[0] * $mpp }
