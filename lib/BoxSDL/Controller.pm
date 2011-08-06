@@ -29,6 +29,7 @@ my %_paused;
 my %_world; 
 my %_vIters;
 my %_pIters; 
+my %_clear_forces;
 
 sub new {
 	my ($self, %args) = @_;
@@ -54,6 +55,7 @@ sub new {
 	$_eoq{$ref} 				 = $args{exit_on_quit} || $args{eoq} || 0;
     $_world{$ref}                = $args{world};
     croak "Need world" unless $args{world};
+    $_clear_forces{$ref}                = $args{c_f};
 
     $_vIters{$ref} = $args{vIters} || 10;
      $_pIters{$ref} = $args{pIters} || 2;
@@ -100,14 +102,16 @@ sub run {
 		$self->_event($ref);
 
 		my $new_time   = Time::HiRes::time;
+
 		my $delta_time = $new_time - $_current_time{ $ref };
 		next if $delta_time < $min_t;
 		$_current_time{ $ref} = $new_time;
 		my $delta_copy = $delta_time;
 
-            $world->Step( $dt, $vIters, $pIters); 
+           $world->Step( $dt, $vIters, $pIters); 
 
 		while ( $delta_copy > $dt ) {
+
 			$self->_move( $ref, 1, $t ); #a full move
 			$delta_copy -= $dt;
 			$t += $dt;
@@ -117,7 +121,7 @@ sub run {
 		$t += $dt * $step;
 
 		$self->_show( $ref, $delta_time );
-
+        $world->ClearForces() if $_clear_forces{ $ref };
 		$dt    = $_dt{ $ref};    #these can change
 		$min_t = $_min_t{ $ref}; #during the cycle
 		SDL::delay( $_sleep_cycle{ $ref } ) if $_sleep_cycle{ $ref };

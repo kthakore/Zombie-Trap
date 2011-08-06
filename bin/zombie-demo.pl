@@ -70,12 +70,13 @@ $listener->SetBeginContactSub(
 $world->SetContactListener($listener);
 my $controller = BoxSDL::Controller->new( 
     dt     => $timestep, 
-	delay  => 1,
+	delay  => 10,
     min_t  => $timestep / 2,
     eoq    => 1,
     world  => $world,
     vIters => $vIters,
-    pIters => $pIters 
+    pIters => $pIters, 
+    c_f    => 1
     );
 
 $controller->add_move_handler(
