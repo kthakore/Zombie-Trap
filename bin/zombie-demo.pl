@@ -14,6 +14,7 @@ use lib 'lib';
 use ZT::Object::Wall;
 use ZT::Actor::Zombie;
 use ZT::Util;
+use ZT::Camera; 
 use BoxSDL::Controller;
 
 my $config = YAML::Tiny->read("$FindBin::Bin/../data/level1.yaml")->[0];
@@ -25,10 +26,10 @@ my $timestep = 0.1;
 my $vIters   = 8;
 my $pIters   = 8;
 
-my $app = SDLx::App->new(
+my $camera = ZT::Camera->new();
+my $app = SDLx::Surface->new(
     width  => $map_w,
     height => $map_h,
-    flags  => SDL_DOUBLEBUF | SDL_HWSURFACE,
 );
 
 
@@ -93,6 +94,7 @@ $controller->add_show_handler(
         $_->draw($app) foreach @zombies;
 
         $app->update();
+        $camera->update_view( $app );
     }
 );
 
