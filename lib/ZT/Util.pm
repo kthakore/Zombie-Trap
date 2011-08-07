@@ -1,7 +1,10 @@
 package ZT::Util;
 use Modern::Perl; 
 use Box2D;
+use FindBin;
 use SDL::GFX::Primitives; 
+
+our $data_dir = "$FindBin::Bin/../data/";
 
 my $ppm = 15.0;
 my $mpp = 1.0 / $ppm;
@@ -69,6 +72,10 @@ sub draw_polygon {
 
     SDL::GFX::Primitives::filled_polygon_color( $app, \@vx, \@vy,
         scalar @verts, $color );
+}
+
+sub level_files {
+
 }
 
 

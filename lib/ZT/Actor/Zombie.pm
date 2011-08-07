@@ -1,5 +1,4 @@
 package ZT::Actor::Zombie;
-use FindBin;
 use SDL::Rect;
 use SDLx::Surface; 
 use SDLx::Sprite::Animated;
@@ -10,7 +9,7 @@ use Carp;
 our $width   = 16;
 our $height  = 25;
 
-our $surface = SDLx::Surface->load("$FindBin::Bin/../data/zombie.bmp");
+our $surface = SDLx::Surface->load($ZT::Util::data_dir."zombie.bmp");
 
 sub _sprite {
     return SDLx::Sprite::Animated->new(
