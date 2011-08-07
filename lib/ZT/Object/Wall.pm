@@ -1,7 +1,7 @@
-package Wall;
+package ZT::Object::Wall;
 use Modern::Perl;
 use Carp;
-use Game::Util;
+use ZT::Util;
 use Data::Dumper;
 
 sub new {
@@ -16,10 +16,10 @@ sub new {
 
     my ( $hx, $hy ) = ( $w / 2.0, $h / 2.0 );
 
-    $self->{body} =  Game::Util::make_body( $self->{world}, $x + $hx, $y + $hy );
-    $self->{shape} = Game::Util::make_rect( $w,       $h );
+    $self->{body} =  ZT::Util::make_body( $self->{world}, $x + $hx, $y + $hy );
+    $self->{shape} = ZT::Util::make_rect( $w,       $h );
     $self->{color} = 0x035307FF;
-    Game::Util::make_fixture( $self->{body}, $self->{shape} );
+    ZT::Util::make_fixture( $self->{body}, $self->{shape} );
 
 # Store the shape for use in the contact listener.
 # b2Fixture::GetShape() could be used in the contact listener, but
@@ -32,7 +32,7 @@ sub new {
 
 sub draw {
     my ($self, $app) = @_;
-    Game::Util::draw_polygon($app, $self);
+    ZT::Util::draw_polygon($app, $self);
 }
 
 1;

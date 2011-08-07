@@ -1,4 +1,4 @@
-package Game::Util;
+package ZT::Util;
 use Modern::Perl; 
 use Box2D;
 use SDL::GFX::Primitives; 
@@ -64,8 +64,8 @@ sub draw_polygon {
     my @verts = map { $body->GetWorldPoint( $shape->GetVertex($_) ) }
         ( 0 .. $shape->GetVertexCount() - 1 );
 
-    my @vx = map { Game::Util::w2s( $_->x ) } @verts;
-    my @vy = map { Game::Util::w2s( $_->y ) } @verts;
+    my @vx = map { ZT::Util::w2s( $_->x ) } @verts;
+    my @vy = map { ZT::Util::w2s( $_->y ) } @verts;
 
     SDL::GFX::Primitives::filled_polygon_color( $app, \@vx, \@vy,
         scalar @verts, $color );

@@ -1,9 +1,9 @@
-package Zombie;
+package ZT::Actor::Zombie;
 use FindBin;
 use SDL::Rect;
 use SDLx::Surface; 
 use SDLx::Sprite::Animated;
-use Game::Util;
+use ZT::Util;
 use Box2D;
 use Carp;
 
@@ -14,7 +14,7 @@ our $surface = SDLx::Surface->load("$FindBin::Bin/../data/zombie.bmp");
 
 sub _sprite {
     return SDLx::Sprite::Animated->new(
-            surface         => $Zombie::surface,
+            surface         => $ZT::Actor::Zombie::surface,
             alpha_key       => 0x0000FF,
             step_x          => 63,
             step_y          => 65,
@@ -23,8 +23,8 @@ sub _sprite {
             left  => [ [ 0, 0 ], [ 1, 0 ], [ 2, 0 ], [ 3, 0 ] ],
             right => [ [ 0, 1 ], [ 1, 1 ], [ 2, 1 ], [ 3, 1 ] ],
             },
-            rect     => SDL::Rect->new( 26, 21, $Zombie::width, $Zombie::height ),
-            clip     => SDL::Rect->new( 26, 21, $Zombie::width, $Zombie::height ),
+            rect     => SDL::Rect->new( 26, 21, $ZT::Actor::Zombie::width, $ZT::Actor::Zombie::height ),
+            clip     => SDL::Rect->new( 26, 21, $ZT::Actor::Zombie::width, $ZT::Actor::Zombie::height ),
             sequence => 'right',
             );
 
@@ -41,16 +41,16 @@ sub new {
 
     my ( $x, $y ) = @{$self->{dims}};
 
-    my ( $w, $h ) = map { Game::Util::s2w($_) } ( $Zombie::width, $Zombie::height );
+    my ( $w, $h ) = map { ZT::Util::s2w($_) } ( $ZT::Actor::Zombie::width, $ZT::Actor::Zombie::height );
     my ( $hx, $hy ) = ( $w / 2.0, $h / 2.0 );
 
     $self->{body} =
-        Game::Util::make_body( $self->{world}, $x + $hx, $y + $hy, dynamic => 1, fixedRotation => 1 );
-    $self->{shape}     = Game::Util::make_rect( $w, $h );
+        ZT::Util::make_body( $self->{world}, $x + $hx, $y + $hy, dynamic => 1, fixedRotation => 1 );
+    $self->{shape}     = ZT::Util::make_rect( $w, $h );
     $self->{color}     = 0xDDDDDDFF;
     $self->{direction} = 1;
     $self->{sprite}    = _sprite();
-    Game::Util::make_fixture( $self->{body}, $self->{shape} );
+    ZT::Util::make_fixture( $self->{body}, $self->{shape} );
 
     $self->{body}->SetUserData(
             {   self => $self,
@@ -66,7 +66,7 @@ sub new {
 #if ( $other{body}->GetType() == Box2D::b2_staticBody ) {
 #$other{shape} = $other{body}->GetUserData();
 #}
-            return if Game::Util::is_above( $zc, $other );
+            return if ZT::Util::is_above( $zc, $other );
 
 # Don't reverse direction if the zombie is moving slowly.
             my $v = $self->{body}->GetLinearVelocity();
@@ -90,8 +90,8 @@ sub draw {
     my $p    = $zombie->{body}->GetWorldCenter();
     $zombie->{sprite}->draw_xy(
             $app,
-            Game::Util::w2s( $p->x ) - $rect->w / 2,
-            Game::Util::w2s( $p->y ) - $rect->h / 2
+            ZT::Util::w2s( $p->x ) - $rect->w / 2,
+            ZT::Util::w2s( $p->y ) - $rect->h / 2
             );
 
 

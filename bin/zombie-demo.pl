@@ -11,9 +11,9 @@ use SDLx::Surface;
 use Box2D;
 use lib 'lib';
 
-use Wall;
-use Zombie;
-use Game::Util;
+use ZT::Object::Wall;
+use ZT::Actor::Zombie;
+use ZT::Util;
 use BoxSDL::Controller;
 
 my $config = YAML::Tiny->read("$FindBin::Bin/../data/level1.yaml")->[0];
@@ -40,13 +40,13 @@ my @zombies;
 
 
 foreach ( @{ $config->{walls} } ) {
-    my @dim = map { Game::Util::s2w($_) } split /\s+/, $_;
-    push @walls, Wall->new( world => $world, dims => \@dim );
+    my @dim = map { ZT::Util::s2w($_) } split /\s+/, $_;
+    push @walls, ZT::Object::Wall->new( world => $world, dims => \@dim );
 }
 
 foreach ( @{ $config->{zombies} } ) {
-    my @loc =  map { Game::Util::s2w($_) } split /\s+/, $_; 
-    push @zombies, Zombie->new( world=> $world, dims => \@loc);
+    my @loc =  map { ZT::Util::s2w($_) } split /\s+/, $_; 
+    push @zombies, ZT::Actor::Zombie->new( world=> $world, dims => \@loc);
 }
 
 my $listener = Box2D::PerlContactListener->new();
