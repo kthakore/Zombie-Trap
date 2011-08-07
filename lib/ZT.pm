@@ -1,26 +1,7 @@
 package ZT;
 use Modern::Perl;
-use MooseX::Singleton;
-
-use ZT::View;
-use ZT::Control;
-
 our $VERSION = '0.01';
-
-has 'view' =>
-  ( is => 'rw', isa => 'ZT::View', default => sub { ZT::View->new() } );
-has 'control' =>
-  ( is => 'rw', isa => 'ZT::Control', default => sub { ZT::Control->new() } );
-
 sub start {
-
-    my $self = shift;
-
-	#attach the switch board 
-	$self->view->app->add_move_handler( sub { $self->control->switch_board( @_ ) } );
-
-    $self->view->run();
-
 }
 
 
@@ -36,8 +17,7 @@ ZT - Game initializer
 
 =head2 start
 
-	my $new = ZT->new();
-	ZT->start();
+	ZT::start();
 
 Running the code.
 

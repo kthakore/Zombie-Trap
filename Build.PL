@@ -1,9 +1,9 @@
 use strict;
 use warnings;
 use lib 'inc';
-use Module::Build::ZT;
+use Module::Build;
 
-my $builder = Module::Build::ZT->new(
+my $builder = Module::Build->new(
     module_name       => 'ZT',
     license           => 'perl',
     dist_author       => q{kthakore <kthakore@cpan.org>},
@@ -11,14 +11,13 @@ my $builder = Module::Build::ZT->new(
     dist_version_from => 'lib/ZT.pm',
     build_requires    => {
         'Test::More'                   => 0,
-        'MooseX::Singleton'            => 0,
         'Box2D'                        => 0,
         'SDL'                          => 0,
-        'Moose::Util::TypeConstraints' => 0
+        'FindBin'                    => 0,
     },
     add_to_cleanup       => ['ZT-*'],
     extra_compiler_flags => '-I src',
-    extra_linker_flags   => 'src/zt.o',
+    extra_linker_flags   => 'src/zt.c',
     create_makefile_pl   => 'traditional',
 );
 
