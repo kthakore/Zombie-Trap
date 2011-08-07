@@ -8,8 +8,8 @@ sub new {
     my $self = bless { x=> 0, y => 0, w=>400, h=> 300, c_x => 200, c_y => 150 }, $_[0];
 
     $self->{app}  = SDLx::App->new(
-            width  => $self->{w},
-            height => $self->{h},
+            width  => $self->{w}+100,
+            height => $self->{h}+100,
             flags  => SDL_DOUBLEBUF | SDL_HWSURFACE,
             );
 
@@ -55,8 +55,8 @@ sub update_view {
 # The camera determines offset of the surface to show on here 
     my $src_rect = [$self->{x}, $self->{y}, $self->{w}, $self->{h}];
 
-    $self->{app}->draw_rect([0,0,$self->{w}, $self->{h}], 0x000000FF);
-    $self->{app}->blit_by( $map_surface, $src_rect, [0,0, $self->{w}, $self->{h}] );
+    $self->{app}->draw_rect([50, 50 ,$self->{w}, $self->{h}], 0x000000FF);
+    $self->{app}->blit_by( $map_surface, $src_rect, [50,50, $self->{w}, $self->{h}] );
 
     $self->{app}->update();
 }
