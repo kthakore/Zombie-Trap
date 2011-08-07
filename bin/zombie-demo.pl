@@ -1,3 +1,27 @@
+package Zombie;
+use Modern::Perl;
+use SDL;
+use SDLx::Surface;
+use SDLx::Sprite::Animated; 
+use Box2D; 
+
+our $surface = SDLx::Surface->load("$FindBin::Bin/../data/zombie.bmp");
+
+sub new {
+   my ($class, @args) = @_;
+   
+   my $self = bless {@args}, $class;
+
+   $self->{width} = 16;
+   $self->{height} = 25;
+   
+   return $self;
+};
+
+
+
+
+package main;
 use Modern::Perl;
 use SDL;
 use SDL::Rect;
@@ -37,7 +61,7 @@ my $zombieWidth   = 16;
 my $zombieHeight  = 25;
 
 # http://opengameart.org/content/isometric-hero-and-creatures
-my $zombieSurface = SDLx::Surface->load("$FindBin::Bin/../data/zombie.bmp");
+my $zombieSurface = $Zombie::surface;
 
 my @walls;
 my @zombies;
