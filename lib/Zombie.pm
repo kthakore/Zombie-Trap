@@ -4,7 +4,8 @@ use SDL::Rect;
 use SDLx::Surface; 
 use SDLx::Sprite::Animated;
 use Game::Util;
-
+use Box2D;
+use Carp;
 
 our $width   = 16;
 our $height  = 25;
@@ -33,12 +34,12 @@ sub _sprite {
 sub new {
     my ($class, @args) = @_;
 
-    my $self = bless {@args}, $self;
+    my $self = bless {@args}, $class;
 
     croak "Need world for zombie; to be in" unless $self->{world}; 
     croak "Need dims for zombie;" unless $self->{dims}; 
 
-    my ( $x, $y ) = @_;
+    my ( $x, $y ) = @{$self->{dims}};
 
     my ( $w, $h ) = map { Game::Util::s2w($_) } ( $Zombie::width, $Zombie::height );
     my ( $hx, $hy ) = ( $w / 2.0, $h / 2.0 );
@@ -49,7 +50,7 @@ sub new {
     $self->{color}     = 0xDDDDDDFF;
     $self->{direction} = 1;
     $self->{sprite}    = _sprite();
-    Game::Util::make_fixture( @zombie{qw( body shape )} );
+    Game::Util::make_fixture( $self->{body}, $self->{shape} );
 
     $self->{body}->SetUserData(
             {   self => $self,
@@ -80,6 +81,35 @@ sub new {
     );
 
     return $self;
+}
+
+sub draw {
+    my ($zombie, $app) = @_;
+
+    my $rect = $zombie->{sprite}->rect;
+    my $p    = $zombie->{body}->GetWorldCenter();
+    $zombie->{sprite}->draw_xy(
+            $app,
+            Game::Util::w2s( $p->x ) - $rect->w / 2,
+            Game::Util::w2s( $p->y ) - $rect->h / 2
+            );
+
+
+
+}
+
+sub move {
+    my( $zombie ) = @_;
+    my $v = $zombie->{body}->GetLinearVelocity();
+    if ( abs( $v->x ) < 1.0 && abs( $v->y ) < 0.01 ) {
+        my $vx = $zombie->{direction} * ( rand() * 2.0 + 2.0 );
+        my $i = Box2D::b2Vec2->new( $vx, 0.0 );
+        my $p = $zombie->{body}->GetWorldCenter();
+        $zombie->{body}->ApplyLinearImpulse( $i, $p );
+    }
+    $zombie->{sprite}->next() if rand() > 0.9;
+
+
 }
 
 

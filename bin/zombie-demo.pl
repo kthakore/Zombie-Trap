@@ -46,7 +46,7 @@ foreach ( @{ $config->{walls} } ) {
 
 foreach ( @{ $config->{zombies} } ) {
     my @loc =  map { Game::Util::s2w($_) } split /\s+/, $_; 
-    push @zombies, Zombie->new( world=> $world, x=> $loc[0], y=> $loc[1]);
+    push @zombies, Zombie->new( world=> $world, dims => \@loc);
 }
 
 my $listener = Box2D::PerlContactListener->new();
