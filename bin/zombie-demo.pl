@@ -11,9 +11,11 @@ use SDLx::Surface;
 use Box2D;
 use lib 'lib';
 
+use Wall;
 use Zombie;
 use Game::Util;
 use BoxSDL::Controller;
+
 my $config = YAML::Tiny->read("$FindBin::Bin/../data/level1.yaml")->[0];
 
 my ( $map_w, $map_h ) = @$config{qw( width height )};
@@ -59,7 +61,8 @@ sub make_wall {
 
 
 foreach ( @{ $config->{walls} } ) {
-    push @walls, make_wall( map { Game::Util::s2w($_) } split /\s+/, $_ );
+    my @dim = map { Game::Util::s2w($_) } split /\s+/, $_;
+    push @walls, Wall->new( @dim );
 }
 
 foreach ( @{ $config->{zombies} } ) {
@@ -107,7 +110,7 @@ sub{
 $controller->add_show_handler(
     sub {
         $app->draw_rect( undef, 0x202020FF );
-        Game::Util::draw_polygon($app, $_)   foreach @walls;
+        $_->draw($app)   foreach @walls;
         $_->draw($app) foreach @zombies;
 
         $app->update();
