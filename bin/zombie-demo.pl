@@ -62,7 +62,7 @@ sub make_wall {
 
 foreach ( @{ $config->{walls} } ) {
     my @dim = map { Game::Util::s2w($_) } split /\s+/, $_;
-    push @walls, Wall->new( @dim );
+    push @walls, Wall->new( world => $world, dims => \@dim );
 }
 
 foreach ( @{ $config->{zombies} } ) {
