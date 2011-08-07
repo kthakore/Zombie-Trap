@@ -38,27 +38,6 @@ my $world = Box2D::b2World->new( $gravity, 1 );
 my @walls;
 my @zombies;
 
-sub make_wall {
-    my ( $x, $y, $w, $h ) = @_;
-
-    my ( $hx, $hy ) = ( $w / 2.0, $h / 2.0 );
-
-    my %wall = (
-        body  => Game::Util::make_body( $world, $x + $hx, $y + $hy ),
-        shape => Game::Util::make_rect( $w,       $h ),
-        color => 0x035307FF,
-    );
-    Game::Util::make_fixture( @wall{qw( body shape )} );
-
-    # Store the shape for use in the contact listener.
-    # b2Fixture::GetShape() could be used in the contact listener, but
-    # it returns a b2Shape, and a b2PolygonShape is needed.
-    $wall{body}->SetUserData( { self => \%wall } );
-
-    return \%wall;
-}
-
-
 
 foreach ( @{ $config->{walls} } ) {
     my @dim = map { Game::Util::s2w($_) } split /\s+/, $_;
