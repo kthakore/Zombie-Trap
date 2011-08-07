@@ -1,24 +1,21 @@
+#! perl
 package main;
 use Modern::Perl;
-use SDL;
-use SDL::Rect;
-use SDL::Video;
-use SDLx::App;
-use SDL::Event;
-use SDL::Events; 
 use FindBin;
 use YAML::Tiny;
 
-use SDLx::Surface;
 use Box2D;
 use lib 'lib';
 
-use ZT::Object::Wall;
-use ZT::Actor::Zombie;
 use ZT::Util;
 use ZT::Camera; 
+use ZT::Object::Wall;
+use ZT::Actor::Zombie;
 use BoxSDL::Controller;
-use Data::Dumper;
+
+use SDL::Event;
+use SDL::Events; 
+use SDLx::Surface;
 
 my $config = YAML::Tiny->read("$FindBin::Bin/../data/level1.yaml")->[0];
 
