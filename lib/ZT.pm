@@ -61,18 +61,12 @@ sub start {
             c_f    => 1
             );
 
-    $controller->add_event_handler(
-            sub { 
-            my $event = shift; 
-
-            my ($mask,$x,$y) = @{ SDL::Events::get_relative_mouse_state( ) };
-
-            $camera->move_rel( $x, $y );
-
-
-            }
-
-            );
+    $controller->add_move_handler(
+        sub { 
+            my $event = shift;
+            $camera->move( $event );
+        }
+    );
 
     $controller->add_move_handler(
             sub{
