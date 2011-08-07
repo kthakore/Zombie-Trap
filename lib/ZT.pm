@@ -11,11 +11,11 @@ use Box2D;
 
 use ZT::Util;
 use ZT::Level; 
+use ZT::State;
 use ZT::Camera; 
 use ZT::Object::Wall;
 use ZT::Actor::Zombie;
 use BoxSDL::Controller;
-
 
 our $VERSION = '0.01';
 sub start {
@@ -24,12 +24,13 @@ sub start {
     my $vIters   = 8;
     my $pIters   = 8;
 
+    my $state = ZT::State->new();
     my $camera = ZT::Camera->new();
 
     my $gravity = Box2D::b2Vec2->new( 0, 9.8 );
     my $world = Box2D::b2World->new( $gravity, 1 );
 
-    my $level = ZT::Level->load( name => 'level1', world => $world );
+    my $level = ZT::Level->load( name => $state->next_level(), world => $world );
 
     my $listener = Box2D::PerlContactListener->new();
 

@@ -15,9 +15,9 @@ sub load {
     croak "Need world for ZT::Level" unless $self->{world};
     croak "Need name for ZT::Level" unless $self->{name};
 
-    $self->{config} = YAML::Tiny->read($ZT::Util::data_dir.$self->{name}.".yaml")->[0];
+    $self->{config} = YAML::Tiny->read($self->{name})->[0];
 
-    croak "Couldn't load ".$self->{name}." from $ZT::Util::data_dir".$self->{name}.".yaml : $!" unless $self->{config};
+    croak "Couldn't load ".$self->{name}.": $!" unless $self->{config};
 
     $self->{surface} = SDLx::Surface->new(
             width => $self->{config}->{width},
