@@ -4,6 +4,8 @@ use SDL;
 use SDL::Rect;
 use SDL::Video;
 use SDLx::App;
+use SDL::Event;
+use SDL::Events; 
 use FindBin;
 use YAML::Tiny;
 
@@ -16,6 +18,7 @@ use ZT::Actor::Zombie;
 use ZT::Util;
 use ZT::Camera; 
 use BoxSDL::Controller;
+use Data::Dumper;
 
 my $config = YAML::Tiny->read("$FindBin::Bin/../data/level1.yaml")->[0];
 
@@ -78,6 +81,19 @@ my $controller = BoxSDL::Controller->new(
     pIters => $pIters, 
     c_f    => 1
     );
+
+$controller->add_event_handler(
+sub { 
+    my $event = shift; 
+
+    my ($mask,$x,$y) = @{ SDL::Events::get_relative_mouse_state( ) };
+
+    $camera->move_rel( $x, $y );
+
+    
+}
+
+);
 
 $controller->add_move_handler(
 sub{

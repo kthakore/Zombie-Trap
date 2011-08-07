@@ -5,7 +5,7 @@ use SDLx::App;
 
 sub new {
 
-   my $self = bless { x=> 0, y => 0, w=> 800, h=> 600, c_x => 400, c_y => 300 }, $_[0];
+   my $self = bless { x=> 0, y => 0, w=>400, h=> 300, c_x => 200, c_y => 150 }, $_[0];
 
     $self->{app}  = SDLx::App->new(
     width  => $self->{w},
