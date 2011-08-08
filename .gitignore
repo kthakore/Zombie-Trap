@@ -1,4 +1,9 @@
+*.c
+*.o
+XS.o 
+*.swp
 blib*
+MYMETA*
 Makefile
 Makefile.old
 Build
