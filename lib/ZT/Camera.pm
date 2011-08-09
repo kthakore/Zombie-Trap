@@ -7,13 +7,20 @@ use SDLx::App;
 
 sub new {
 
-    my $self = bless { x=> 0, y => 0, w=>400, h=> 300, c_x => 200, c_y => 150 }, $_[0];
+    my $self = bless { x=> 0, y => 0, w=>400, h=> 300 }, $_[0];
+
+    $self->{c_x} = $self->{w} /2;
+    $self->{c_y} = $self->{h} /2;
+
+    $self->{hud_offset} = 100;
+    my $margin = $self->{hud_offset} * 2;
 
     $self->{app}  = SDLx::App->new(
-            width  => $self->{w}+100,
-            height => $self->{h}+100,
+            width  => $self->{w}+$margin,
+            height => $self->{h}+$margin,
             flags  => SDL_DOUBLEBUF | SDL_HWSURFACE,
             );
+
 
 
     return $self; 
@@ -54,7 +61,7 @@ sub move_to {
 sub move {
     my ($self, $delta) = @_;
     my ($mask, $x, $y) = @{ SDL::Events::get_mouse_state( ) };
-    my $hud_offset     = 50;
+    my $hud_offset     = $self->{hud_offset};
     
     if( $y >= $hud_offset && $y <= $hud_offset + $self->{h} 
      && $x >= $hud_offset && $x <= $hud_offset + $self->{w} ) {
@@ -114,7 +121,7 @@ sub update_view {
 # The camera determines offset of the surface to show on here 
     my $src_rect = [$self->{x}, $self->{y}, $self->{w}, $self->{h}];
 
-    my $hud_offset = 50;
+    my $hud_offset = $self->{hud_offset};
     $self->{app}->draw_rect([$hud_offset, $hud_offset ,$self->{w}, $self->{h}], 0x000000FF);
     
     $self->{app}->blit_by( $map_surface, $src_rect, [$hud_offset,$hud_offset, 0, 0] );
