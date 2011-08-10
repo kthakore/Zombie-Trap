@@ -63,7 +63,7 @@ sub move {
         $y = int(($y - $hud_offset) / 20);
     
         # up + left
-        if( ($x == 0 && $y <= 1) || ($x <= 1 && $y == 0) ) {
+        if( $x + $y <= 1 ) {
             $self->{x} -= $delta * ($self->{w} / 40);
             $self->{y} -= $delta * ($self->{w} / 40);
         }
@@ -81,7 +81,7 @@ sub move {
         }
         
         # down + right
-        elsif( ($x == 19 && $y >= 13) || ($x >= 18 && $y == 14) ) {
+        elsif( $x + $y >= 32 ) {
             $self->{x} += $delta * ($self->{w} / 40);
             $self->{y} += $delta * ($self->{w} / 40);
         }
