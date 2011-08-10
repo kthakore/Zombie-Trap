@@ -13,3 +13,9 @@ zombies:
   - 20   80
   - 60   120
   - 100  160
+zombies_needed_to_win: 3
+zombie_classes:
+  -
+    simple: 2
+    converter: 1
+    destroyer: 1
