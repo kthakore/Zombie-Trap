@@ -18,7 +18,15 @@ use ZT::Actor::Zombie;
 use BoxSDL::Controller;
 
 our $VERSION = '0.01';
+
 sub start {
+
+game();
+
+
+}
+
+sub game {
     my $fps      = 60.0;
     my $timestep = 0.1;
     my $vIters   = 8;

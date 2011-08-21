@@ -3,6 +3,9 @@ use Modern::Perl;
 use Box2D;
 use FindBin;
 use SDL::GFX::Primitives; 
+use SDL;
+use SDL::Video;
+use SDLx::App;
 
 our $data_dir = "$FindBin::Bin/../data/";
 
@@ -76,6 +79,21 @@ sub draw_polygon {
 
 sub level_files {
 
+}
+
+
+my $app;
+sub app {
+    unless( $ZT::Util::app )
+    {
+           $ZT::Util::app = SDLx::App->new(
+            width  => 800,
+            height => 640,
+            flags  => SDL_DOUBLEBUF | SDL_HWSURFACE,
+            );
+    }
+
+    return $ZT::Util::app ;
 }
 
 

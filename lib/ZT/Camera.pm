@@ -2,26 +2,35 @@ package ZT::Camera;
 use SDL;
 use SDL::Event;
 use SDL::Events;
-use SDL::Video;
 use SDLx::App; 
+
+use ZT::Util;
+use Carp;
 
 sub new {
 
-    my $self = bless { x=> 0, y => 0, w=>400, h=> 300 }, $_[0];
+    my ($class, @args) = @_;
+
+
+    my $self = bless { @args }, $class;
+
+    $self->{x} = 0 unless $self->{x};
+    $self->{y} = 0 unless $self->{y};
+    $self->{hud_offset} = 100 unless $self->{hud_offset};
+
+    $self->{app}  = ZT::Util::app(); 
+
+    croak "Need app unless" unless $self->{app};
+    my $app = $self->{app};
+
+    my $margin = $self->{hud_offset} * 2;
+
+
+    $self->{w} = $app->w - $margin;
+    $self->{h} = $app->h - $margin;
 
     $self->{c_x} = $self->{w} /2;
     $self->{c_y} = $self->{h} /2;
-
-    $self->{hud_offset} = 100;
-    my $margin = $self->{hud_offset} * 2;
-
-    $self->{app}  = SDLx::App->new(
-            width  => $self->{w}+$margin,
-            height => $self->{h}+$margin,
-            flags  => SDL_DOUBLEBUF | SDL_HWSURFACE,
-            );
-
-
 
     return $self; 
 }
