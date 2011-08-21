@@ -2,7 +2,6 @@ package ZT::Camera;
 use SDL;
 use SDL::Event;
 use SDL::Events;
-use SDLx::App; 
 
 use ZT::Util;
 use Carp;

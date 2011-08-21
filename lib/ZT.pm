@@ -5,6 +5,7 @@ use SDL;
 use SDL::Event;
 use SDL::Events; 
 use SDLx::Surface;
+use SDLx::Widget::Menu;
 
 use Box2D;
 
@@ -17,12 +18,25 @@ use ZT::Object::Wall;
 use ZT::Actor::Zombie;
 use BoxSDL::Controller;
 
+
+
 our $VERSION = '0.01';
 
 sub start {
+    
+    my $app = ZT::Util::app(); 
 
-game();
+    my $menu = SDLx::Widget::Menu->new( font => $ZT::Util::data_dir . '/font.ttf' );
+    $menu->items(
+            'New Game'  => sub { $app->stop(); game(); $app->run()  },
+            'Quit'      => sub { $app->stop();  }, #return the of this in event loop
+            );
 
+    $app->add_event_handler( sub { $menu->event_hook($_[0]);} );
+    $app->add_show_handler( sub { $menu->render($app); $app->update();} );
+
+
+    $app->run();
 
 }
 
