@@ -50,7 +50,7 @@ sub game {
     my $gravity = Box2D::b2Vec2->new( 0, 9.8 );
     my $world = Box2D::b2World->new( $gravity, 1 );
 
-    my $level = ZT::Level->load( name => $state->next_level(), world => $world );
+    my $level = ZT::Level->prepare( $state->next_level(), $world );
 
     my $listener = Box2D::PerlContactListener->new();
 
@@ -90,7 +90,7 @@ sub game {
 
     $controller->add_move_handler(
             sub{
-            $_->move() foreach @{ $level->zombies() };
+            $_->move() foreach @{ $level->prepared_zombies() };
 
             }
 

@@ -1,83 +1,85 @@
 package ZT::Level;
 use Modern::Perl;
-use YAML::Tiny;
-use SDLx::Surface; 
 use Carp;
+use Moose;
+use MooseX::Storage;
+with Storage( 'format' => 'JSON', 'io' => 'File' );
+use namespace::autoclean;
 
 use ZT::Util;
 use ZT::Object::Wall;
-use ZT::Actor::Zombie;
+use ZT::Actor::Zombie; 
 
-sub load {
-    my ( $class, @args ) = @_;
-    my $self = bless {@args}, $class;
+use SDLx::Surface; 
 
-    croak "Need world for ZT::Level" unless $self->{world};
-    croak "Need name for ZT::Level" unless $self->{name};
 
-    $self->{config} = YAML::Tiny->read($self->{name})->[0];
+has 'width'   => ( is => 'rw', isa => 'Int', required => 1);
+has 'height'  => ( is => 'rw', isa => 'Int', required => 1);
+has 'walls'   => ( is => 'rw', isa => 'ArrayRef[ArrayRef[Int]]' );
+has 'zombies' => ( is => 'rw', isa => 'ArrayRef[ArrayRef[Int]]' );
+has 'win'     => ( is => 'rw', isa => 'Int' );
+has 'classes' => ( is => 'rw', isa => 'HashRef' );
 
-    croak "Couldn't load ".$self->{name}.": $!" unless $self->{config};
+# Prepared attributes
+has 'surface' => ( is => 'rw', isa => 'SDLx::Surface' );
+has 'prepared_walls' => (is => 'rw', isa => 'ArrayRef[ZT::Object::Wall]');
+has 'prepared_zombies' => (is => 'rw', isa => 'ArrayRef[ZT::Actor::Zombie]');
 
-    $self->{surface} = SDLx::Surface->new(
-            width => $self->{config}->{width},
-            height => $self->{config}->{height}
-            );
 
-    my @walls;
+sub prepare
+{
+    my $class = shift;
+    my $name = shift;
+    my $world = shift; 
+
+    croak "Need world for ZT::Level" unless $world;
+
+    my $self = $class->load( $name );
+
+    # Process the loaded class into a level 
+
+    # make the surface
+    $self->surface( SDLx::Surface->new( 
+        width => $self->width,
+        height => $self->height
+    ) );
+    
+    my @walls; 
+
+    # prepare the walls and zombie loaders
+    foreach( @{ $self->walls } )
+    {
+        my @dim = map { ZT::Util::s2w($_) } @$_;
+        push @walls, ZT::Object::Wall->new( world => $world, dims => \@dim );
+    }
+    $self->prepared_walls( \@walls );
+
     my @zombies;
 
-
-    foreach ( @{ $self->{config}->{walls} } ) {
-        my @dim = map { ZT::Util::s2w($_) } split /\s+/, $_;
-        push @walls, ZT::Object::Wall->new( world => $self->{world}, dims => \@dim );
+    foreach ( @{ $self->zombies } )
+    {
+        my @loc = map { ZT::Util::s2w($_) } @$_;
+        push @zombies, ZT::Actor::Zombie->new( world=> $world, dims => \@loc);
     }
 
-    foreach ( @{ $self->{config}->{zombies} } ) {
-        my @loc =  map { ZT::Util::s2w($_) } split /\s+/, $_; 
-        push @zombies, ZT::Actor::Zombie->new( world=> $self->{world}, dims => \@loc);
-    }
-
-    $self->{walls} = \@walls;
-    $self->{zombies} = \@zombies; 
+    $self->prepared_zombies( \@zombies );
 
     return $self;
-}
+};
 
-sub surface {
-
-    $_[0]->{surface}
-
-}
-
-sub walls {
-
-    $_[0]->{walls}
-
-}
-
-sub zombies {
-
-    $_[0]->{zombies}
-
-}
-
-
-sub draw {
-    my $self = shift;
-    my $app = $self->{surface};
-    my @walls = @{$self->{walls}};
-    my @zombies = @{$self->{zombies}};
+sub draw 
+{
+    my $self = shift; 
+    my $app = $self->surface();
+    my @walls = @{$self->prepared_walls};
+    my @zombies = @{$self->prepared_zombies};
 
         $app->draw_rect( undef, 0x202020FF );
         $_->draw($app)   foreach @walls;
         $_->draw($app) foreach @zombies;
 
         $app->update();
-    
-    
+ 
 }
 
-
-
-1;
+__PACKAGE__->meta->make_immutable;

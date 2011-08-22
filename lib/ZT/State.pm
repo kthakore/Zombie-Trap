@@ -7,7 +7,7 @@ use Data::Dumper;
 sub new {
     my $self =  bless {}, $_[0];
 
-    my $level_glob = $ZT::Util::data_dir."*.yaml";
+    my $level_glob = $ZT::Util::data_dir."*.json";
     my @levels = glob $level_glob;
     $self->{levels} = \@levels;
 
