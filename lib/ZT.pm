@@ -14,8 +14,6 @@ use ZT::Util;
 use ZT::Level; 
 use ZT::State;
 use ZT::Camera; 
-use ZT::Object::Wall;
-use ZT::Actor::Zombie;
 use BoxSDL::Controller;
 
 
