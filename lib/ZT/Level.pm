@@ -9,6 +9,7 @@ use namespace::autoclean;
 use ZT::Util;
 use ZT::Object::Wall;
 use ZT::Actor::Zombie; 
+use ZT::State::Level;
 
 use SDLx::Surface; 
 
@@ -24,6 +25,8 @@ has 'classes' => ( is => 'rw', isa => 'HashRef' );
 has 'surface' => ( is => 'rw', isa => 'SDLx::Surface' );
 has 'prepared_walls' => (is => 'rw', isa => 'ArrayRef[ZT::Object::Wall]');
 has 'prepared_zombies' => (is => 'rw', isa => 'ArrayRef[ZT::Actor::Zombie]');
+
+has 'state' => ( is => 'rw', isa => 'ZT::State::Level', default => sub{ ZT::State::Level->new() } );
 
 
 sub prepare
@@ -80,6 +83,13 @@ sub draw
 
         $app->update();
  
+}
+
+
+# Do stuff with level that makes it change the state? 
+sub update {
+
+
 }
 
 __PACKAGE__->meta->make_immutable;

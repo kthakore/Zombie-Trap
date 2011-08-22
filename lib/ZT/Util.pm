@@ -7,6 +7,8 @@ use SDL;
 use SDL::Video;
 use SDLx::App;
 
+use ZT::State::Game;
+
 our $data_dir = "$FindBin::Bin/../data/";
 
 my $ppm = 15.0;
@@ -77,11 +79,6 @@ sub draw_polygon {
         scalar @verts, $color );
 }
 
-sub level_files {
-
-}
-
-
 my $app;
 sub app {
     unless( $ZT::Util::app )
@@ -94,6 +91,21 @@ sub app {
     }
 
     return $ZT::Util::app ;
+}
+
+
+my $game_state;
+sub game_state {
+
+    unless ( $ZT::Util::game_state )
+    {
+
+        $ZT::Util::game_state = ZT::State::Game->new();        
+
+    }
+
+    return $ZT::Util::game_state;
+
 }
 
 

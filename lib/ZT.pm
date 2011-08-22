@@ -44,13 +44,13 @@ sub game {
     my $vIters   = 8;
     my $pIters   = 8;
 
-    my $state = ZT::State->new();
+    my $state = ZT::Util::game_state();
     my $camera = ZT::Camera->new();
 
     my $gravity = Box2D::b2Vec2->new( 0, 9.8 );
     my $world = Box2D::b2World->new( $gravity, 1 );
 
-    my $level = ZT::Level->prepare( $state->next_level(), $world );
+    my $level =  $state->next_level( $world );
 
     my $listener = Box2D::PerlContactListener->new();
 
