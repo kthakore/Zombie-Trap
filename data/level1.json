@@ -22,7 +22,7 @@
         "converter":1
         },
     "town":{
-        "location":[680,550, 60, 40]
+        "location":[140,160, 60, 40]
     }
 
 }

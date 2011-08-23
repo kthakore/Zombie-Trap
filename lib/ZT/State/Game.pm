@@ -2,6 +2,7 @@ package ZT::State::Game;
 use Modern::Perl;
 use Carp;
 use Moose;
+use BoxSDL::Controller;
 
 # Running, Loss, Won
 has 'status' => ( is => 'rw', isa => 'Str', default => 'running' );
@@ -21,10 +22,12 @@ has 'level_index' => (is =>'rw', isa => 'Int', default => 0);
 
 has 'current_level' => ( is => 'rw', isa => 'ZT::Level' );
 
+has 'controller' => ( is => 'rw', isa => 'BoxSDL::Controller', required => 1);
+
 sub next_level 
 {
     my $self = shift;
-    my $world = shift;
+    my $world = $self->controller->world();
 
     my $file =  $self->levels->[ $self->level_index ];
 

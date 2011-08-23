@@ -98,10 +98,5 @@ sub draw
 }
 
 
-# Do stuff with level that makes it change the state? 
-sub update {
-
-
-}
 
 __PACKAGE__->meta->make_immutable;

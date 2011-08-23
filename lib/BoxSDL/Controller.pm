@@ -66,6 +66,14 @@ sub new {
 	return $self;
 }
 
+sub world {
+    my $self = shift;
+    my $ref = refaddr $self;
+
+    return $_world{$ref}
+
+}
+
 sub DESTROY {
 	my $self = shift;
 	my $ref = refaddr $self;

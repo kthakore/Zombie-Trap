@@ -114,7 +114,7 @@ sub game_state {
     unless ( $ZT::Util::game_state )
     {
 
-        $ZT::Util::game_state = ZT::State::Game->new();        
+        $ZT::Util::game_state = ZT::State::Game->new( controller => shift);        
 
     }
 

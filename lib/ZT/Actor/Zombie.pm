@@ -17,7 +17,7 @@ sub _sprite {
             alpha_key       => 0x0000FF,
             step_x          => 63,
             step_y          => 65,
-            ticks_per_frame => 10,
+            ticks_per_frame => 1,
             sequences       => {
             left  => [ [ 0, 0 ], [ 1, 0 ], [ 2, 0 ], [ 3, 0 ] ],
             right => [ [ 0, 1 ], [ 1, 1 ], [ 2, 1 ], [ 3, 1 ] ],
@@ -101,7 +101,7 @@ sub move {
     my( $zombie ) = @_;
     my $v = $zombie->{body}->GetLinearVelocity();
     if ( abs( $v->x ) < 1.0 && abs( $v->y ) < 0.01 ) {
-        my $vx = $zombie->{direction} * ( rand() * 2.0 + 2.0 );
+        my $vx = $zombie->{direction} * ( rand() * 5.0 + 2.0 );
         my $i = Box2D::b2Vec2->new( $vx, 0.0 );
         my $p = $zombie->{body}->GetWorldCenter();
         $zombie->{body}->ApplyLinearImpulse( $i, $p );
