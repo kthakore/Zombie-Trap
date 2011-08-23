@@ -26,7 +26,7 @@ sub start {
 
     my $menu = SDLx::Widget::Menu->new( font => $ZT::Util::data_dir . '/font.ttf' );
     $menu->items(
-            'New Game'  => sub { $app->stop(); game(); $app->run()  },
+            'New Game'  => sub { $app->stop(); level_loop(); $app->run()  },
             'Quit'      => sub { $app->stop();  }, #return the of this in event loop
             );
 
@@ -38,7 +38,20 @@ sub start {
 
 }
 
+sub level_loop {
+   
+    my $index = 0;
+
+    while( $index != -1 )
+      {
+            $index = game();
+            warn "Index is $index";
+      }
+
+}
+
 sub game {
+    my $index = shift;
     my $fps      = 60.0;
     my $timestep = 0.1;
     my $vIters   = 8;
@@ -78,7 +91,7 @@ sub game {
     my $state = ZT::Util::game_state( $controller );
     my $camera = ZT::Camera->new();
 
-    my $level =  $state->next_level(  );
+    my $level =  $state->next_level( $index );
 
 
 
@@ -107,15 +120,7 @@ sub game {
 
     $controller->run();
 
-
-    if ( $state->next_level )
-      {
-          game();
-      }
-      else
-      {
-            warn "No more levels";
-      }
+    return $state->level_index();
 
 }
 

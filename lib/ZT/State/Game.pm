@@ -20,24 +20,43 @@ has 'levels' => (is => 'rw', isa => 'ArrayRef[Str]', default => sub {
 
 has 'level_index' => (is =>'rw', isa => 'Int', default => 0);
 
-has 'current_level' => ( is => 'rw', isa => 'ZT::Level' );
+has 'current_level' => ( is => 'rw' );
 
 has 'controller' => ( is => 'rw', isa => 'BoxSDL::Controller', required => 1);
 
 sub next_level 
 {
     my $self = shift;
+    my $index = shift;
     my $world = $self->controller->world();
+
+    $self->level_index( $index ) if $index;
 
     my $file =  $self->levels->[ $self->level_index ];
 
-    return 0 unless $file;
+     unless ($file)
+    {
+
+        croak "No such file $file for loading level found";
+
+    }
+    else
+    {
 
     $self->current_level( ZT::Level->prepare( $file, $world ) );
 
-    $self->level_index( $self->level_index+ 1 );
+    if( $self->levels->[ $self->level_index + 1 ] )
+     {
+        $self->level_index( $self->level_index + 1 );
+     }
+    else
+     {
+         $self->level_index( -1 );
+     }
 
+    }
     return $self->current_level();
+
 }
 
 # Runs every frame
