@@ -85,6 +85,7 @@ sub game {
         sub { 
             my $event = shift;
             $camera->move( $event );
+            $state->update();
         }
     );
 

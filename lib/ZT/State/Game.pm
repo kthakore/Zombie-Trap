@@ -37,5 +37,29 @@ sub next_level
     return $self->current_level();
 }
 
+# Runs every frame
+sub update
+{
+    my $self = shift;
+
+    #If Running update Level State
+    if( $self->status eq 'running')
+    {
+        $self->current_level->state->update();
+
+    }
+
+}
+
+# Runs every 'meaning full' collisions
+sub manage_state
+{
+    my $self = shift;
+
+
+    # Check current level for dead townspeople, or converted
+
+}
+
 
 __PACKAGE__->meta->make_immutable; 

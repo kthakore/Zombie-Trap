@@ -6,7 +6,7 @@ use SDL::GFX::Primitives;
 use SDL;
 use SDL::Video;
 use SDLx::App;
-
+use Data::Dumper;
 use ZT::State::Game;
 
 our $data_dir = "$FindBin::Bin/../data/";
@@ -65,18 +65,32 @@ sub s2w { return $_[0] * $mpp }
 sub w2s { return $_[0] * $ppm }
 
 sub draw_polygon {
-    my ($app, $polygon) = @_;
+    my ( $app, $self) = @_;
 
-    my ( $body, $shape, $color ) = @$polygon{qw( body shape color )};
+    my ( $body, $shape, $color ) = @$self{qw( body shape color )};
 
-    my @verts = map { $body->GetWorldPoint( $shape->GetVertex($_) ) }
-        ( 0 .. $shape->GetVertexCount() - 1 );
+    my @verts; my @vx; my @vy;
+    unless( $self->{poly_dat} )
+    {
+        @verts = map { $body->GetWorldPoint( $shape->GetVertex($_) ) }
+            ( 0 .. $shape->GetVertexCount() - 1 );
 
-    my @vx = map { ZT::Util::w2s( $_->x ) } @verts;
-    my @vy = map { ZT::Util::w2s( $_->y ) } @verts;
+        @vx = map { ZT::Util::w2s( $_->x ) } @verts;
+        @vy = map { ZT::Util::w2s( $_->y ) } @verts;
+        $self->{poly_dat} = { verts => \@verts, vx => \@vx, vy => \@vy };
+    }
+    else
+    {
+        my $pd = $self->{poly_dat};
+        @verts = @{$pd->{verts}};
+        @vx = @{$pd->{vx}};
+        @vy = @{$pd->{vy}};
 
-    SDL::GFX::Primitives::filled_polygon_color( $app, \@vx, \@vy,
-        scalar @verts, $color );
+    }
+    
+        SDL::GFX::Primitives::filled_polygon_color( $app, \@vx, \@vy,
+            scalar @verts, $color );
+
 }
 
 my $app;

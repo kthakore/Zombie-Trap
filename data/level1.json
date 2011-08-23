@@ -20,6 +20,9 @@
         "simple":2,
         "destroyer":1,
         "converter":1
-        }
+        },
+    "town":{
+        "location":[680,550, 60, 40]
+    }
 
 }
