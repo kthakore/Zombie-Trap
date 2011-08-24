@@ -40,6 +40,8 @@ sub new {
                 if( $ref =~ 'Zombie' )
                 {
                     $self->{health} -= 10;
+                    warn 'Town Hit! Health: '.$self->{health};
+
                 }
             }
             });

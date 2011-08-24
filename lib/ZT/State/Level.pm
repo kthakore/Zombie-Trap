@@ -17,8 +17,8 @@ sub update
     my $self = shift;
 
     my $level = ZT::Util::game_state->current_level();
-
-    if( $level->prepared_town->health() < 100 )
+    
+    if( $level->prepared_town->health() < 0 )
     {
         warn "Town Defeated!!!";
         
