@@ -120,6 +120,9 @@ sub game {
 
     $controller->run();
 
+# Ensure this world is dead.
+    $world->DESTROY();
+
     return $state->level_index();
 
 }
