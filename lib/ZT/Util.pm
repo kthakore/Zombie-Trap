@@ -118,6 +118,9 @@ sub game_state {
         $ZT::Util::game_state = ZT::State::Game->new( controller => shift);        
 
     }
+    elsif (my $controller = shift) {
+        $ZT::Util::game_state->controller( $controller );
+    }
 
     return $ZT::Util::game_state;
 
