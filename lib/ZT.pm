@@ -24,7 +24,7 @@ sub start {
     
     my $app = ZT::Util::app(); 
 
-    my $menu = SDLx::Widget::Menu->new( font => $ZT::Util::data_dir . '/font.ttf' );
+    my $menu = SDLx::Widget::Menu->new( font => $ZT::Util::data_dir . '/font.ttf', topleft => [100,360] );
     $menu->items(
             'New Game'  => sub { $app->stop(); level_loop(); $app->run()  },
             'Quit'      => sub { $app->stop();  }, #return the of this in event loop

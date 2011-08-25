@@ -101,6 +101,7 @@ sub app {
             width  => 800,
             height => 640,
             flags  => SDL_DOUBLEBUF | SDL_HWSURFACE,
+            eoq => 1
             );
     }
 
